@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Log in{% endblock %}
+
+{% block content %}
+<div class="auth-layout">
+  <section class="auth-card">
+    <h1>Log in</h1>
+    <p class="muted">Use your candidate or employer account.</p>
+
+    {% if error %}<div class="alert alert-error">{{ error }}</div>{% endif %}
+
+    <form method="post" action="{{ url_for('auth.login') }}" class="stack">
+      {% if next_url %}<input type="hidden" name="next" value="{{ next_url }}">{% endif %}
+      <label class="field">
+        <span>Email</span>
+        <input type="email" name="email" value="{{ form.email }}" autocomplete="email" required autofocus>
+      </label>
+      <label class="field">
+        <span>Password</span>
+        <input type="password" name="password" autocomplete="current-password" required>
+      </label>
+      <button class="btn btn-primary btn-block" type="submit">Log in</button>
+    </form>
+
+    <p class="muted small">New here? <a href="{{ url_for('auth.register') }}">Create an account</a>.</p>
+  </section>
+
+  <aside class="auth-aside">
+    <h2>Demo accounts</h2>
+    <p>After running the seed command, these local-only accounts are available. The shared demo password is documented in <code>README.md</code>.</p>
+    <ul class="list-clean">
+      <li><strong>alice@demo.test</strong> — candidate, Interviewing (booked)</li>
+      <li><strong>bob@demo.test</strong> — candidate, Pending</li>
+      <li><strong>carol@demo.test</strong> — candidate, Accepted</li>
+      <li><strong>dave@demo.test</strong> / <strong>erin@demo.test</strong> — candidates racing for one slot</li>
+      <li><strong>hr@acme.test</strong> / <strong>hr@globex.test</strong> — employers</li>
+    </ul>
+  </aside>
+</div>
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Edit job' if not is_new else 'Post a job' }}{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <div>
+    <span class="eyebrow">Employer</span>
+    <h1>{{ 'Edit job posting' if not is_new else 'Post a new job' }}</h1>
+    <p class="muted">A non-empty title and description are required. The skills list may be empty.</p>
+  </div>
+  <div class="page-head-meta">
+    <a class="btn btn-secondary btn-sm" href="{{ url_for('employer.dashboard') }}">Dashboard</a>
+  </div>
+</div>
+
+{% if error %}<div class="alert alert-error">{{ error }}</div>{% endif %}
+
+<div class="split">
+  <section class="card">
+    <form method="post"
+          action="{{ url_for('employer.job_edit', job_id=job.id) if not is_new else url_for('employer.job_new') }}"
+          class="stack">
+      <label class="field">
+        <span>Job title</span>
+        <input type="text" name="title" value="{{ job.title if job else '' }}" maxlength="160" required>
+      </label>
+
+      <label class="field">
+        <span>Description</span>
+        <textarea name="description" rows="12" required placeholder="Responsibilities, stack, team, and what success looks like.">{{ job.description if job else '' }}</textarea>
+      </label>
+
+      <label class="field">
+        <span>Required skills <small class="muted">(comma separated, optional)</small></span>
+        <input type="text" name="skills" value="{{ skills_text }}" placeholder="Python, SQL">
+        <small class="hint">These skills are normalized and used for the match score. Leave empty to score every candidate 100.</small>
+      </label>
+
+      <div class="form-actions">
+        <button class="btn btn-primary" type="submit">{{ 'Save changes' if not is_new else 'Publish job' }}</button>
+        {% if not is_new %}
+          <a class="btn btn-secondary" href="{{ url_for('employer.applicants', job_id=job.id) }}">View applicants</a>
+        {% endif %}
+      </div>
+    </form>
+  </section>
+
+  <aside class="card card-muted">
+    <h2>Matching note</h2>
+    <p class="muted small">Candidates and employers see scores from the same implementation:</p>
+    <div class="formula">floor(100 × overlap ÷ required)</div>
+    <p class="muted small">If you list no required skills, every candidate scores 100 and ties are broken by job title and id.</p>
+  </aside>
+</div>
+{% endblock %}

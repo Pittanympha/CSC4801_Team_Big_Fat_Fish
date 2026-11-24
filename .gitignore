@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Local databases and test scratch data
+instance/*.db
+instance/*.db-wal
+instance/*.db-shm
+instance/test-tmp/
+
+# Secrets and local configuration
+.env
+
+# Tooling output
+.pytest_cache/
+.coverage
+htmlcov/
+test_out.txt
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db

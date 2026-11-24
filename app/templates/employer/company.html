@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Company profile{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <div>
+    <span class="eyebrow">Employer</span>
+    <h1>Company profile</h1>
+    <p class="muted">Candidates see this name and description on every job you post.</p>
+  </div>
+  <div class="page-head-meta">
+    <a class="btn btn-secondary btn-sm" href="{{ url_for('employer.dashboard') }}">Dashboard</a>
+  </div>
+</div>
+
+{% if error %}<div class="alert alert-error">{{ error }}</div>{% endif %}
+
+<div class="split">
+  <section class="card">
+    <form method="post" action="{{ url_for('employer.company') }}" class="stack">
+      <label class="field">
+        <span>Company name</span>
+        <input type="text" name="company_name" value="{{ company.company_name }}" maxlength="160" required>
+      </label>
+      <label class="field">
+        <span>Company description</span>
+        <textarea name="description" rows="8" maxlength="5000" placeholder="What the company builds, how it works, and what candidates can expect.">{{ company.description }}</textarea>
+      </label>
+      <div class="form-actions">
+        <button class="btn btn-primary" type="submit">Save company</button>
+      </div>
+    </form>
+  </section>
+
+  <aside class="card card-muted">
+    <h2>Hiring contact</h2>
+    <p class="muted small">Signed in as {{ company.display_name }} ({{ company.email }}).</p>
+    <p class="muted small">The contact name is not shown as the company name; candidates see the company profile above.</p>
+  </aside>
+</div>
+{% endblock %}

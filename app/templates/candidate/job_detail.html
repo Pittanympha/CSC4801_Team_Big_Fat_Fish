@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}{{ job.title }}{% endblock %}
+
+{% block content %}
+<p class="breadcrumb"><a href="{{ url_for('candidate.dashboard') }}">Jobs</a> / {{ job.title }}</p>
+
+<div class="detail-grid">
+  <section class="card">
+    <div class="job-card-head">
+      <div>
+        <h1>{{ job.title }}</h1>
+        <p class="muted">{{ job.company_name }} · hiring contact {{ job.employer_name }}</p>
+      </div>
+      <div class="score score-lg">
+        {{ job.score }}<small>%</small>
+        <span class="score-label">match</span>
+      </div>
+    </div>
+
+    <div class="chips">
+      {% for skill in job.required_skills %}
+        <span class="chip">{{ skill }}</span>
+      {% else %}
+        <span class="chip chip-muted">No required skills · everyone scores 100</span>
+      {% endfor %}
+    </div>
+
+    <h2 class="section-title">Role description</h2>
+    <p class="prose">{{ job.description }}</p>
+  </section>
+
+  <aside class="card card-muted">
+    <h2>Your application</h2>
+    {% if job.application %}
+      <p><span class="{{ job.application.status|status_class }}">{{ job.application.status }}</span></p>
+      {% if job.application.start_at %}
+        <p class="muted small">Interview: {{ job.application.start_at|utc }} – {{ job.application.end_at|utc }}</p>
+      {% endif %}
+      <a class="btn btn-secondary btn-block" href="{{ url_for('candidate.applications') }}">Open my applications</a>
+    {% else %}
+      <p class="muted">You have not applied to this role yet.</p>
+      <form method="post" action="{{ url_for('candidate.apply', job_id=job.id) }}">
+        <button class="btn btn-primary btn-block" type="submit">Apply now</button>
+      </form>
+      <p class="muted small">A new application starts as <strong>Pending</strong>. You can apply once per job.</p>
+    {% endif %}
+
+    <hr class="divider">
+
+    <h3>Match breakdown</h3>
+    <p class="muted small">Your skills are compared only with the required skills listed for this role.</p>
+    <div class="chips">
+      {% for skill in job.required_skills %}
+        <span class="chip">{{ skill }}</span>
+      {% else %}
+        <span class="chip chip-muted">Empty required list → 100</span>
+      {% endfor %}
+    </div>
+  </aside>
+</div>
+{% endblock %}

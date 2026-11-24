@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Create account{% endblock %}
+
+{% block content %}
+<div class="auth-layout">
+  <section class="auth-card">
+    <h1>Create account</h1>
+    <p class="muted">Pick one role. Accounts cannot switch roles later.</p>
+
+    {% if error %}<div class="alert alert-error">{{ error }}</div>{% endif %}
+
+    <form method="post" action="{{ url_for('auth.register') }}" class="stack">
+      <fieldset class="role-picker">
+        <legend>I am a</legend>
+        <label class="role-option">
+          <input type="radio" name="role" value="Candidate" {% if form.role != 'Employer' %}checked{% endif %}>
+          <span><strong>Candidate</strong><small>Find jobs and book interviews</small></span>
+        </label>
+        <label class="role-option">
+          <input type="radio" name="role" value="Employer" {% if form.role == 'Employer' %}checked{% endif %}>
+          <span><strong>Employer</strong><small>Post jobs and manage applicants</small></span>
+        </label>
+      </fieldset>
+
+      <label class="field">
+        <span>Display name</span>
+        <input type="text" name="display_name" value="{{ form.display_name }}" maxlength="120" required>
+      </label>
+      <label class="field">
+        <span>Email</span>
+        <input type="email" name="email" value="{{ form.email }}" maxlength="254" autocomplete="email" required>
+      </label>
+      <label class="field">
+        <span>Password <small class="muted">(at least 8 characters)</small></span>
+        <input type="password" name="password" minlength="8" autocomplete="new-password" required>
+      </label>
+
+      <button class="btn btn-primary btn-block" type="submit">Create account</button>
+    </form>
+
+    <p class="muted small">Already registered? <a href="{{ url_for('auth.login') }}">Log in</a>.</p>
+  </section>
+
+  <aside class="auth-aside">
+    <h2>What happens next</h2>
+    <ol class="steps">
+      <li><strong>Candidates</strong> add skills and a resume, then see every job ranked by match score.</li>
+      <li><strong>Employers</strong> post jobs and see applicants ranked by the same score.</li>
+      <li>When an employer moves an application to <em>Interviewing</em>, the candidate can book a 30-minute slot.</li>
+    </ol>
+  </aside>
+</div>
+{% endblock %}

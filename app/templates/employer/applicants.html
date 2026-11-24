@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block title %}Applicants · {{ job.title }}{% endblock %}
+
+{% block content %}
+<p class="breadcrumb"><a href="{{ url_for('employer.dashboard') }}">Dashboard</a> / {{ job.title }} / Applicants</p>
+
+<div class="page-head">
+  <div>
+    <span class="eyebrow">Applicant management</span>
+    <h1>{{ job.title }}</h1>
+    <p class="muted">Sorted by match score, then candidate name, then stable id.</p>
+  </div>
+  <div class="page-head-meta">
+    <a class="btn btn-secondary btn-sm" href="{{ url_for('employer.job_edit', job_id=job.id) }}">Edit job</a>
+    <a class="btn btn-secondary btn-sm" href="{{ url_for('employer.job_slots', job_id=job.id) }}">Availability</a>
+  </div>
+</div>
+
+<section class="card">
+  <div class="chips">
+    {% for skill in job.required_skills %}
+      <span class="chip">{{ skill }}</span>
+    {% else %}
+      <span class="chip chip-muted">No required skills · all scores 100</span>
+    {% endfor %}
+  </div>
+
+  {% if applicants %}
+  <div class="table-wrap">
+    <table class="table applicant-table">
+      <thead>
+        <tr>
+          <th>Candidate</th>
+          <th>Skills</th>
+          <th class="num">Match</th>
+          <th>Status</th>
+          <th>Interview</th>
+          <th class="actions">Set status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for applicant in applicants %}
+        <tr>
+          <td>
+            <strong>{{ applicant.display_name }}</strong>
+            <div class="muted small">{{ applicant.email }}</div>
+            <div class="muted small">Applied {{ applicant.created_at|utc }}</div>
+          </td>
+          <td>
+            <div class="chips">
+              {% for skill in applicant.skills %}<span class="chip">{{ skill }}</span>{% else %}<span class="muted small">none</span>{% endfor %}
+            </div>
+          </td>
+          <td class="num"><span class="score score-sm">{{ applicant.score }}<small>%</small></span></td>
+          <td><span class="{{ applicant.status|status_class }}">{{ applicant.status }}</span></td>
+          <td class="small">
+            {% if applicant.booking_id %}
+              {{ applicant.start_at|utc }}<br><span class="muted">to {{ applicant.end_at|utc }}</span>
+            {% else %}
+              <span class="muted">Not booked</span>
+            {% endif %}
+          </td>
+          <td class="actions">
+            <form method="post" action="{{ url_for('employer.application_status', application_id=applicant.application_id) }}" class="status-form">
+              <select name="status" aria-label="Application status for {{ applicant.display_name }}">
+                {% for status in application_statuses %}
+                  <option value="{{ status }}" {% if status == applicant.status %}selected{% endif %}>{{ status }}</option>
+                {% endfor %}
+              </select>
+              <button class="btn btn-secondary btn-xs" type="submit">Update</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <h2>No applicants yet</h2>
+    <p>Once candidates apply, they appear here ranked by match score.</p>
+  </div>
+  {% endif %}
+</section>
+
+<p class="muted small">Resumes are private to candidates; this list intentionally shows only profile identity, skills, score, status, and booking.</p>
+{% endblock %}

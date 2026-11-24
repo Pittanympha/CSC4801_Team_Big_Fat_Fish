@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Your profile{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <div>
+    <span class="eyebrow">Candidate profile</span>
+    <h1>Your profile</h1>
+    <p class="muted">Skills drive every match score. Resume text stays private to you.</p>
+  </div>
+  <div class="page-head-meta">
+    <a class="btn btn-secondary btn-sm" href="{{ url_for('candidate.dashboard') }}">Back to jobs</a>
+  </div>
+</div>
+
+{% if error %}<div class="alert alert-error">{{ error }}</div>{% endif %}
+
+<div class="split">
+  <section class="card">
+    <form method="post" action="{{ url_for('candidate.profile') }}" class="stack">
+      <label class="field">
+        <span>Display name</span>
+        <input type="text" name="display_name" value="{{ profile.display_name }}" maxlength="120" required>
+      </label>
+
+      <label class="field">
+        <span>Technical skills <small class="muted">(comma separated)</small></span>
+        <input type="text" name="skills" value="{{ skills_text }}" placeholder="Python, SQL, Docker">
+        <small class="hint">Trimmed, lower-cased, de-duplicated, and stored as a skill list for matching.</small>
+      </label>
+
+      <label class="field">
+        <span>Resume text</span>
+        <textarea name="resume_text" rows="14" placeholder="Paste your resume as plain text.">{{ profile.resume_text }}</textarea>
+        <small class="hint">Only you can read this text. It is never used in the match score.</small>
+      </label>
+
+      <div class="form-actions">
+        <button class="btn btn-primary" type="submit">Save profile</button>
+        <a class="btn btn-secondary" href="{{ url_for('candidate.resume', candidate_id=profile.id) }}">Preview resume page</a>
+      </div>
+    </form>
+  </section>
+
+  <aside class="card card-muted">
+    <h2>How scoring works</h2>
+    <p class="muted">For each job, the platform compares your normalized skill set with the job's required skills.</p>
+    <div class="formula">
+      score = floor(100 × |your skills ∩ required| ÷ |required|)
+    </div>
+    <p class="muted small">If a job lists no required skills, every candidate scores 100. Resume text is never an input.</p>
+    <ul class="list-clean small">
+      <li>Python + SQL vs Python, SQL → <strong>100</strong></li>
+      <li>Python vs Python, SQL → <strong>50</strong></li>
+      <li>Rust vs Python, SQL → <strong>0</strong></li>
+    </ul>
+  </aside>
+</div>
+{% endblock %}

@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}My applications{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <div>
+    <span class="eyebrow">Candidate</span>
+    <h1>My applications</h1>
+    <p class="muted">Track status and book an interview when an employer moves you to Interviewing.</p>
+  </div>
+  <div class="page-head-meta">
+    <a class="btn btn-secondary btn-sm" href="{{ url_for('candidate.dashboard') }}">Browse jobs</a>
+  </div>
+</div>
+
+<div class="application-list">
+  {% for app in applications %}
+  <article class="card application-card">
+    <div class="application-head">
+      <div>
+        <h2>{{ app.job_title }}</h2>
+        <p class="muted">{{ app.company_name }} · contact {{ app.employer_name }}</p>
+      </div>
+      <span class="{{ app.status|status_class }}">{{ app.status }}</span>
+    </div>
+
+    <div class="application-meta">
+      <span><span class="label">Applied</span> {{ app.created_at|utc }}</span>
+      <span>
+        <span class="label">Interview</span>
+        {% if app.booking_id %}
+          {{ app.start_at|utc }} – {{ app.end_at|utc }}
+        {% else %}
+          Not booked
+        {% endif %}
+      </span>
+    </div>
+
+    {% if app.status == 'Interviewing' and not app.booking_id %}
+      <div class="booking-box">
+        {% if app.available_slots %}
+          <form method="post" action="{{ url_for('candidate.book', application_id=app.id) }}" class="inline-form">
+            <label class="field field-inline">
+              <span>Choose a 30-minute slot (UTC)</span>
+              <select name="slot_id" required>
+                {% for slot in app.available_slots %}
+                  <option value="{{ slot.id }}">{{ slot.start_at|utc }} — {{ slot.job_title }}</option>
+                {% endfor %}
+              </select>
+            </label>
+            <button class="btn btn-primary" type="submit">Book interview</button>
+          </form>
+        {% else %}
+          <p class="muted">No available slots yet. Your employer has been notified to publish availability.</p>
+        {% endif %}
+      </div>
+    {% elif app.booking_id %}
+      <p class="booking-confirmed">Interview booked for {{ app.start_at|utc }} (30 minutes).</p>
+    {% endif %}
+  </article>
+  {% else %}
+  <div class="empty-state">
+    <h2>No applications yet</h2>
+    <p>Browse the job dashboard and apply to a role.</p>
+    <a class="btn btn-primary" href="{{ url_for('candidate.dashboard') }}">Browse jobs</a>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

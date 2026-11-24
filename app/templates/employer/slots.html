@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}Availability · {{ job.title }}{% endblock %}
+
+{% block content %}
+<p class="breadcrumb"><a href="{{ url_for('employer.dashboard') }}">Dashboard</a> / {{ job.title }} / Availability</p>
+
+<div class="page-head">
+  <div>
+    <span class="eyebrow">Interview availability</span>
+    <h1>{{ job.title }}</h1>
+    <p class="muted">Publish future 30-minute slots. Candidates see only unbooked slots for your company.</p>
+  </div>
+  <div class="page-head-meta">
+    <a class="btn btn-secondary btn-sm" href="{{ url_for('employer.applicants', job_id=job.id) }}">Applicants</a>
+  </div>
+</div>
+
+{% if error %}<div class="alert alert-error">{{ error }}</div>{% endif %}
+
+<div class="split">
+  <section class="card">
+    <h2>Create a slot</h2>
+    <form method="post" action="{{ url_for('employer.job_slots', job_id=job.id) }}" class="stack">
+      <label class="field">
+        <span>Start (UTC)</span>
+        <input type="datetime-local" name="start_at" required>
+      </label>
+      <label class="field">
+        <span>End (UTC)</span>
+        <input type="datetime-local" name="end_at" required>
+        <small class="hint">Must be exactly 30 minutes after the start, and in the future.</small>
+      </label>
+      <button class="btn btn-primary" type="submit">Add availability</button>
+    </form>
+  </section>
+
+  <section class="card">
+    <div class="card-head">
+      <h2>Published slots</h2>
+      <span class="muted small">Booked slots cannot be deleted.</span>
+    </div>
+
+    {% if slots %}
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr><th>Start (UTC)</th><th>End</th><th>State</th><th class="actions"></th></tr>
+        </thead>
+        <tbody>
+          {% for slot in slots %}
+          <tr>
+            <td>{{ slot.start_at|utc }}</td>
+            <td class="muted">{{ slot.end_at|utc }}</td>
+            <td>
+              {% if slot.booking_id %}
+                <span class="badge badge-interviewing">Booked</span>
+                <div class="muted small">{{ slot.booked_by }}</div>
+              {% elif slot.start_at > now_iso %}
+                <span class="badge badge-accepted">Available</span>
+              {% else %}
+                <span class="badge">Past</span>
+              {% endif %}
+            </td>
+            <td class="actions">
+              {% if not slot.booking_id %}
+              <form method="post" action="{{ url_for('employer.slot_delete', slot_id=slot.id) }}">
+                <button class="btn btn-danger btn-xs" type="submit">Delete</button>
+              </form>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p class="muted">No slots published yet.</p>
+    {% endif %}
+  </section>
+</div>
+{% endblock %}

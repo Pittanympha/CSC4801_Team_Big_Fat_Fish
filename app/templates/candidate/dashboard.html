@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}Recommended jobs{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <div>
+    <span class="eyebrow">Candidate dashboard</span>
+    <h1>Recommended jobs</h1>
+    <p class="muted">Every open role, sorted by the deterministic skill-overlap score.</p>
+  </div>
+  <div class="page-head-meta">
+    <span class="stat-inline"><strong>{{ jobs|length }}</strong> open roles</span>
+    <a class="btn btn-secondary btn-sm" href="{{ url_for('candidate.profile') }}">Edit profile</a>
+  </div>
+</div>
+
+<section class="profile-strip">
+  <div>
+    <span class="label">Your skills</span>
+    <div class="chips">
+      {% for skill in profile.skills %}
+        <span class="chip">{{ skill }}</span>
+      {% else %}
+        <span class="muted">No skills yet — add them to improve your scores.</span>
+      {% endfor %}
+    </div>
+  </div>
+  <div class="profile-strip-side">
+    <span class="label">Resume</span>
+    {% if profile.resume_text %}
+      <span class="badge badge-accepted">Saved privately</span>
+    {% else %}
+      <a class="small" href="{{ url_for('candidate.profile') }}">Add a resume</a>
+    {% endif %}
+  </div>
+</section>
+
+<div class="job-list">
+  {% for job in jobs %}
+  <article class="job-card">
+    <div class="job-card-main">
+      <div class="job-card-head">
+        <div>
+          <h2><a href="{{ url_for('candidate.job_detail', job_id=job.id) }}">{{ job.title }}</a></h2>
+          <p class="muted">{{ job.company_name }}</p>
+        </div>
+        <div class="score" title="floor(100 × overlap ÷ required skills)">
+          {{ job.score }}<small>%</small>
+          <span class="score-label">match</span>
+        </div>
+      </div>
+
+      <div class="chips">
+        {% for skill in job.required_skills %}
+          <span class="chip">{{ skill }}</span>
+        {% else %}
+          <span class="chip chip-muted">No required skills · everyone scores 100</span>
+        {% endfor %}
+      </div>
+
+      <p class="snippet">{{ job.description|truncate(190) }}</p>
+    </div>
+
+    <div class="job-card-side">
+      {% if job.application_status %}
+        <span class="{{ job.application_status|status_class }}">{{ job.application_status }}</span>
+        <span class="muted small">Application submitted</span>
+      {% endif %}
+      <a class="btn btn-primary btn-sm" href="{{ url_for('candidate.job_detail', job_id=job.id) }}">
+        View role
+      </a>
+    </div>
+  </article>
+  {% else %}
+  <div class="empty-state">
+    <h2>No open roles yet</h2>
+    <p>Employers have not posted any jobs. Check back after the seed command runs.</p>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

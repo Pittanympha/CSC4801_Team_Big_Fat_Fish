@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}TalentBridge{% endblock %} · TalentBridge</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="{{ url_for('home') }}">
+        <span class="brand-mark">TB</span>
+        <span>TalentBridge</span>
+      </a>
+
+      {% if user %}
+        <nav class="nav" aria-label="Main navigation">
+          {% if user.role == 'Candidate' %}
+            <a href="{{ url_for('candidate.dashboard') }}">Jobs</a>
+            <a href="{{ url_for('candidate.applications') }}">My applications</a>
+            <a href="{{ url_for('candidate.profile') }}">Profile</a>
+          {% else %}
+            <a href="{{ url_for('employer.dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('employer.job_new') }}">Post a job</a>
+            <a href="{{ url_for('employer.company') }}">Company</a>
+          {% endif %}
+        </nav>
+        <div class="account">
+          <span class="account-name">
+            {{ user.display_name }}
+            <span class="role-chip">{{ user.role }}</span>
+          </span>
+          <form method="post" action="{{ url_for('auth.logout') }}">
+            <button class="btn btn-ghost btn-sm" type="submit">Log out</button>
+          </form>
+        </div>
+      {% else %}
+        <nav class="nav" aria-label="Account navigation">
+          <a href="{{ url_for('auth.login') }}">Log in</a>
+          <a class="btn btn-primary btn-sm" href="{{ url_for('auth.register') }}">Create account</a>
+        </nav>
+      {% endif %}
+    </div>
+  </header>
+
+  <main class="page">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-stack">
+          {% for category, message in messages %}
+            <div class="flash flash-{{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="footer">
+    TalentBridge · CSC4801 final project · local demo environment · all times in UTC
+  </footer>
+</body>
+</html>

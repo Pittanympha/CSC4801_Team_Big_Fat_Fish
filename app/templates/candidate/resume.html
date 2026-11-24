@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Resume{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <div>
+    <span class="eyebrow">Private</span>
+    <h1>{{ candidate_name }} — resume</h1>
+    <p class="muted">Only the owning candidate can open this page.</p>
+  </div>
+  <div class="page-head-meta">
+    <a class="btn btn-secondary btn-sm" href="{{ url_for('candidate.profile') }}">Edit profile</a>
+  </div>
+</div>
+
+<section class="card">
+  {% if resume_text %}
+    <pre class="resume">{{ resume_text }}</pre>
+  {% else %}
+    <p class="muted">No resume text saved yet.</p>
+  {% endif %}
+</section>
+{% endblock %}

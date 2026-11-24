@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Hiring without the guesswork{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <div class="hero-copy">
+    <span class="eyebrow">CSC4801 final project</span>
+    <h1>Hiring without the guesswork.</h1>
+    <p class="lede">
+      TalentBridge is a two-sided recruiting platform. Candidates see a transparent
+      skill-overlap score for every job and book interviews in one place. Employers
+      post roles, review applicants in ranked order, and manage availability.
+    </p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="{{ url_for('auth.register') }}">Create an account</a>
+      <a class="btn btn-secondary" href="{{ url_for('auth.login') }}">Log in</a>
+    </div>
+    <p class="muted small">Local demo. Seeded accounts are documented in README.md.</p>
+  </div>
+
+  <div class="hero-panel">
+    <div class="mini-card">
+      <div class="mini-head">
+        <span class="mini-title">Backend Engineer</span>
+        <span class="score score-sm">100<small>%</small></span>
+      </div>
+      <p class="muted small">Acme Robotics</p>
+      <div class="chips">
+        <span class="chip">python</span><span class="chip">sql</span>
+      </div>
+      <div class="mini-row"><span>Match</span><strong>2 of 2 required skills</strong></div>
+    </div>
+    <div class="mini-card mini-card-offset">
+      <div class="mini-head">
+        <span class="mini-title">Interview booked</span>
+        <span class="badge badge-interviewing">Interviewing</span>
+      </div>
+      <p class="muted small">Thu · 10:30 UTC · 30 minutes</p>
+    </div>
+  </div>
+</section>
+
+<section class="feature-grid">
+  <article class="feature">
+    <h3>Transparent matching</h3>
+    <p>One deterministic skill-overlap formula powers both sides of the marketplace. No resume keyword black box.</p>
+  </article>
+  <article class="feature">
+    <h3>Safe scheduling</h3>
+    <p>Booking runs in a database transaction with a uniqueness constraint, so two candidates can never take the same slot.</p>
+  </article>
+  <article class="feature">
+    <h3>Server-side rules</h3>
+    <p>Roles, ownership, resume privacy, and status changes are enforced by the backend, not by hidden buttons.</p>
+  </article>
+</section>
+{% endblock %}
